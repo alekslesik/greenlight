@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 )
 
@@ -12,14 +11,20 @@ func (app *application) healthcheckHandler(w http.ResponseWriter, r *http.Reques
 	// string literal (enclosed with backticks) so that we can include double-quote
 	// characters in the JSON without needing to escape them? We also use the %q verb to
 	// wrap the interpolated values in double-quotes.
-	js := `{"status": "available", "enviroment": %q, "version": %q}`
-	js = fmt.Sprintf(js, app.config.env, version)
+	// js := `{"status": "available", "enviroment": %q, "version": %q}`
+	// js = fmt.Sprintf(js, app.config.env, version)
 
-	// Set the "Content-Type: application/json" header on the response. If you forget to
-	// this, Go will default to sending a "Content-Type: text/plain; charset=utf-8"
-	// header instead.
-	w.Header().Set("Content-Type", "application/json")
+	// Create a map which holds the information that we want to send in the response.
+	data := map[string]string{
+		"status":     "available",
+		"enviroment": app.config.env,
+		"version":    version,
+	}
 
-	w.Write([]byte(js))
-
+	err := app.writeJSON(w, http.StatusOK, data, nil)
+	if err != nil {
+		app.logger.Println(err)
+		http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)
+		return
+	}
 }
