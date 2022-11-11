@@ -28,8 +28,7 @@ func (app *application) healthcheckHandler(w http.ResponseWriter, r *http.Reques
 	// Encode the struct to JSON and send it as the HTTP response.
 	err := app.writeJSON(w, http.StatusOK, env, nil)
 	if err != nil {
-		app.logger.Println(err)
-		http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)
-		return
+		// Use the new serverErrorResponse() helper
+		app.serverErrorResponse(w, r, err)
 	}
 }
