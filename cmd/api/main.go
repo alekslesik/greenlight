@@ -51,6 +51,8 @@ func main() {
 		logger: logger,
 	}
 
+	
+
 	// Use the httprouter instance returned by app.routes() as the server handler.
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", cfg.port),

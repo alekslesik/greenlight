@@ -14,14 +14,19 @@ func (app *application) healthcheckHandler(w http.ResponseWriter, r *http.Reques
 	// js := `{"status": "available", "enviroment": %q, "version": %q}`
 	// js = fmt.Sprintf(js, app.config.env, version)
 
-	// Create a map which holds the information that we want to send in the response.
-	data := map[string]string{
+	// Declare an envelope map containing the data for the response. Notice that the way
+	// we've constructed this means the environment and version data will now be nested
+	// under a system_info key in the JSON response.
+	env := envelope{
 		"status":     "available",
-		"enviroment": app.config.env,
-		"version":    version,
+		"system_info" : map[string]string {
+			"enviroment": app.config.env,
+			"version":    version,
+		},
 	}
 
-	err := app.writeJSON(w, http.StatusOK, data, nil)
+	// Encode the struct to JSON and send it as the HTTP response.
+	err := app.writeJSON(w, http.StatusOK, env, nil)
 	if err != nil {
 		app.logger.Println(err)
 		http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)
