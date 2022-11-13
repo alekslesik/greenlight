@@ -29,5 +29,4 @@ func (app *application) routes() *httprouter.Router {
 
 	// Return Return the httprouter instance
 	return router
-
 }

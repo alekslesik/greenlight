@@ -26,9 +26,9 @@ func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Reques
 	// Use the new readJSON() helper to decode the request body into the input struct.
 	// If this returns an error we send the client the error message along with a 400
 	// Bad Request status code, just like before.
-	err := app.readJSON(w, r, &input)
+	err := app.readJSON(w, r, input)
 	if err != nil {
-		app.errorResponse(w, r, http.StatusBadRequest, err.Error())
+		app.badRequestResponse(w, r, err)
 		return
 	}
 
