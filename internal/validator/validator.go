@@ -46,7 +46,7 @@ func (v *Validator) Check(ok bool, key, message string) {
 }
 
 // In returns true if a specific value is in a list of strings.
-func (v *Validator) In(value string, list ...string) bool {
+func In(value string, list ...string) bool {
 	for i := range list {
 		if value == list[i] {
 			return true
@@ -56,12 +56,12 @@ func (v *Validator) In(value string, list ...string) bool {
 }
 
 // Matches returns true if a string value matches a specific regexp pattern.
-func (v *Validator) Matches(value string, rx *regexp.Regexp) bool {
+func Matches(value string, rx *regexp.Regexp) bool {
 	return rx.MatchString(value)
 }
 
 // Unique returns true if all string values in a slice are unique.
-func (v *Validator) Unique(values []string) bool {
+func Unique(values []string) bool {
 	uniqueValues := make(map[string]bool)
 
 	for _, v := range values {
