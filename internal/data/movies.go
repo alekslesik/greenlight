@@ -16,7 +16,7 @@ type Movie struct {
 	Version   int32     `json:"veraion"`
 }
 
-func ValidateMovie(v *validator.Validator, movie *Movie)  {
+func ValidateMovie(v *validator.Validator, movie *Movie) {
 	// Use the Check() method to execute our validation checks. This will add the
 	// provided key and error message to the errors map if the check does not evaluate
 	// to true. For example, in the first line here we "check that the title is not
