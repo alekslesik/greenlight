@@ -15,7 +15,7 @@ type Movie struct {
 	Year      int32     `json:"year,omitempty"`
 	Runtime   Runtime   `json:"runtime,omitempty"`
 	Genres    []string  `json:"genres,omitempty"`
-	Version   int32     `json:"veraion"`
+	Version   int32     `json:"version"`
 }
 
 type MovieModel struct {
