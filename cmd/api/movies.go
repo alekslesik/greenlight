@@ -1,9 +1,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/alekslesik/greenlight/internal/data"
 	"github.com/alekslesik/greenlight/internal/validator"
@@ -68,7 +68,7 @@ func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Reques
 
 	// Write a JSON response with a 201 Created status code, the movie data in the
 	// response body, and the Location header.
-	err = app.writeJSON(w, http.StatusCreated, envelope{"movie" : movie}, headers)
+	err = app.writeJSON(w, http.StatusCreated, envelope{"movie": movie}, headers)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
@@ -84,16 +84,18 @@ func (app *application) showMovieHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Create a new instance of the Movie struct, containing the ID we extracted from
-	// the URL and some dummy data. Also notice that we deliberately haven't set a
-	// value for the Year field.
-	movie := data.Movie{
-		ID:        id,
-		CreatedAt: time.Now(),
-		Title:     "Casablanca",
-		Runtime:   102,
-		Genres:    []string{"drama", "romance", "war"},
-		Version:   1,
+	// Call the Get() method to fetch the data for a specific movie. We also need to
+	// use the errors.Is() function to check if it returns a data.ErrRecordNotFound
+	// error, in which case we send a 404 Not Found response to the client.
+	movie, err := app.models.Movies.Get(id)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
 	}
 
 	// Encode the struct to JSON and send it as the HTTP response.
