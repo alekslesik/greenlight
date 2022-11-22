@@ -70,6 +70,7 @@ func (app *application) writeJSON(w http.ResponseWriter, status int, data envelo
 	return nil
 }
 
+// Define a readJSON() helper for reading responses. 
 func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst interface{}) error {
 
 	// Use http.MaxBytesReader() to limit the size of the request body to 1MB.
@@ -155,7 +156,6 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst int
 		default:
 			return err
 		}
-
 	}
 
 	// Call Decode() again, using a pointer to an empty anonymous struct as the
