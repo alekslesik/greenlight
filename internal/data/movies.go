@@ -1,6 +1,7 @@
 package data
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"time"
@@ -67,11 +68,20 @@ func (m MovieModel) Get(id int64) (*Movie, error) {
 	// Declare a Movie struct to hold the data returned by the query.
 	var movie Movie
 
-	// Execute the query using the QueryRow() method, passing in the provided id value
-	// as a placeholder parameter, and scan the response data into the fields of the
+	// Use the context.WithTimeout() function to create a context.Context which carries a
+	// 3-second timeout deadline. Note that we're using the empty context.Background()
+	// as the 'parent' context.
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+
+	// Importantly, use defer to make sure that we cancel the context before the Get()
+	// method returns.
+	defer cancel()
+
+	// Use the QueryRowContext() method to execute the query, passing in the context
+	// with the deadline as the first argument and scan the response data into the fields of the
 	// Movie struct. Importantly, notice that we need to convert the scan target for the
 	// genres column using the pq.Array() adapter function again.
-	err := m.DB.QueryRow(query, id).Scan(
+	err := m.DB.QueryRowContext(ctx, query, id).Scan(
 		&[]byte{},
 		&movie.ID,
 		&movie.CreatedAt,
@@ -85,7 +95,7 @@ func (m MovieModel) Get(id int64) (*Movie, error) {
 	// Handle any errors. If there was no matching movie found, Scan() will return
 	// a sql.ErrNoRows error. We check for this and return our custom ErrRecordNotFound
 	// error instead.
-	if err == sql.ErrNoRows {
+	if err != sql.ErrNoRows {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
 			return nil, ErrRecordNotFound
@@ -103,7 +113,7 @@ func (m MovieModel) Update(movie *Movie) error {
 	// Declare the SQL query for updating the record and returning the new version number.
 	// Add the 'AND version = $6' clause to the SQL query.
 	query := `
-		UPDATE movies 
+		UPDATE movies
 		SET title = $1, year = $2, runtime = $3, genres = $4, version = version + 1
 		WHERE id = $5 AND version = $6
 		RETURNING version`
