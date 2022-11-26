@@ -9,8 +9,45 @@ import (
 	"github.com/alekslesik/greenlight/internal/validator"
 )
 
-// Add a createMovieHandler for the "POST /v1/movies" endpoint. For now we simply
-// return a plain-text placeholder response.
+//! GET /v1/movies endpoint.
+func (app *application) listMoviesHandler(w http.ResponseWriter, r *http.Request) {
+	// To keep things consistent with our other handlers, we'll define an input struct // to hold the expected values from the request query string.
+	var input struct {
+		Title    string
+		Genres   []string
+		Page     int
+		PageSize int
+		Sort     string
+	}
+	// Initialize a new Validator instance.
+	v := validator.New()
+	// Call r.URL.Query() to get the url.Values map containing the query string data.
+	qs := r.URL.Query()
+	// Use our helpers to extract the title and genres query string values, falling back
+	// to defaults of an empty string and an empty slice respectively if they are not
+	// provided by the client.
+	input.Title = app.readString(qs, "title", "")
+	input.Genres = app.readCSV(qs, "genres", []string{})
+
+	// Get the page and page_size query string values as integers. Notice that we set
+	// the default page value to 1 and default page_size to 20, and that we pass the
+	// validator instance as the final argument here.
+	input.Page = app.readInt(qs, "page", 1, v)
+	input.PageSize = app.readInt(qs, "page_size", 20, v)
+	// Extract the sort query string value, falling back to "id" if it is not provided
+	// by the client (which will imply a ascending sort on movie ID).
+	input.Sort = app.readString(qs, "sort", "id")
+	// Check the Validator instance for any errors and use the failedValidationResponse()
+	// helper to send the client a response if necessary.
+	if !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+	// Dump the contents of the input struct in a HTTP response.
+	fmt.Fprintf(w, "%+v\n", input)
+}
+
+//! POST /v1/movies endpoint
 func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Request) {
 	// Declare an anonymous struct to hold the information that we expect to be in the
 	// HTTP request body (note that the field names and types in the struct are a subset
@@ -74,9 +111,7 @@ func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Reques
 	}
 }
 
-// Add a showMovieHandler for the "GET /v1/movies/:id" endpoint. For now, we retrieve
-// the interpolated "id" parameter from the current URL and include it in a	placeholder
-// response.
+//! GET /v1/movies/:id" endpoint
 func (app *application) showMovieHandler(w http.ResponseWriter, r *http.Request) {
 	// Extract the movie ID from the URL.
 	id, err := app.readIDParam(r)
@@ -106,9 +141,7 @@ func (app *application) showMovieHandler(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-// Update a updateMovieHandler for the "PUT /v1/movies/:id" endpoint. For now, we retrieve
-// the interpolated "id" parameter from the current URL and include it in a	placeholder
-// response.
+//! PUT /v1/movies/:id" endpoint
 func (app *application) updateMovieHandler(w http.ResponseWriter, r *http.Request) {
 	// Extract the movie ID from the URL.
 	id, err := app.readIDParam(r)
@@ -166,7 +199,7 @@ func (app *application) updateMovieHandler(w http.ResponseWriter, r *http.Reques
 	if input.Genres != nil {
 		movie.Genres = input.Genres
 	}
-	
+
 	// Validate the updated movie record, sending the client a 422 Unprocessable Entity
 	// response if any checks fail.
 	v := validator.New()
@@ -194,9 +227,7 @@ func (app *application) updateMovieHandler(w http.ResponseWriter, r *http.Reques
 	}
 }
 
-// Delete a deleteMovieHandler for the "DELETE /v1/movies/:id" endpoint. For now, we retrieve
-// the interpolated "id" parameter from the current URL and include it in a	placeholder
-// response.
+//! DELETE /v1/movies/:id" endpoint.
 func (app *application) deleteMovieHandler(w http.ResponseWriter, r *http.Request) {
 	// Extract the movie ID from the URL.
 	id, err := app.readIDParam(r)
@@ -224,11 +255,11 @@ func (app *application) deleteMovieHandler(w http.ResponseWriter, r *http.Reques
 		app.serverErrorResponse(w, r, err)
 	}
 
-	//	You may prefer to send an empty response body and a
-	// 204 No Content status code here, rather than a
-	// "movie successfully deleted" message. It really depends on
-	// who your clients are — if they are humans, then sending a
-	// message similar to the above is a nice UX touch; if they are
-	// machines, then a 204 No Content response is probably
-	// sufficient.
+	//*	You may prefer to send an empty response body and a
+	//* 204 No Content status code here, rather than a
+	//* "movie successfully deleted" message. It really depends on
+	//* who your clients are — if they are humans, then sending a
+	//* message similar to the above is a nice UX touch; if they are
+	//* machines, then a 204 No Content response is probably
+	//* sufficient.
 }
