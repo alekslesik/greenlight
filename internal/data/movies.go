@@ -24,13 +24,74 @@ type MovieModel struct {
 	DB *sql.DB
 }
 
+// Create a new GetAll() method which returns a slice of movies. Although we're not
+// using them right now, we've set this up to accept the various filter parameters as
+// arguments.
+func (m *MovieModel) GetAll(title string, genres []string, filters Filters) ([]*Movie, error) {
+	// Construct the SQL query to retrieve all movie records.
+	query :=
+		`SELECT id, created_at, title, year, runtime, genres, version
+		FROM movies
+		ORDER BY id`
+
+	// Create a context with a 3-second timeout.
+	ctx, cancel := context.WithTimeout(context.Background(), 3 * time.Second)
+	defer cancel()
+
+	// Use QueryContext() to execute the query. This returns a sql.Rows resultset
+	// containing the result.
+	rows, err := m.DB.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	// Importantly, defer a call to rows.Close() to ensure that the resultset is closed
+	// before GetAll() returns.
+	defer rows.Close()
+
+	// Initialize an empty slice to hold the movie data.
+	movies := []*Movie{}
+
+	// Use rows.Next to iterate through the rows in the resultset.
+	for rows.Next() {
+		// Initialize an empty Movie struct to hold the data for an individual movie.
+		var movie Movie
+
+		// Scan the values from the row into the Movie struct. Again, note that we're
+		// using the pq.Array() adapter on the genres field here.
+		err := rows.Scan(
+			&movie.ID,
+			&movie.CreatedAt,
+			&movie.Title,
+			&movie.Year,
+			&movie.Runtime,
+			pq.Array(&movie.Genres),
+			&movie.Version,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		// Add the Movie struct to the slice.
+		movies = append(movies, &movie)
+	}
+
+	// When the rows.Next() loop has finished, call rows.Err() to retrieve any error
+	// that was encountered during the iteration.
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return movies, nil
+}
+
 // The Insert() method accepts a pointer to a movie struct, which should contain the
 // data for the new record.
 func (m *MovieModel) Insert(movie *Movie) error {
 	// Define the SQL query for inserting a new record in the movies table and returning
 	// the system-generated data.
-	query := `
-		INSERT INTO movies (title, year, runtime, genres)
+	query :=
+		`INSERT INTO movies (title, year, runtime, genres)
 		VALUES ($1, $2, $3, $4)
 		RETURNING id, created_at, version`
 
@@ -64,8 +125,8 @@ func (m MovieModel) Get(id int64) (*Movie, error) {
 	}
 
 	// Define the SQL query for retrieving the movie data.
-	query := `
-		SELECT id, created_at, title, year, runtime, genres, version
+	query :=
+		`SELECT id, created_at, title, year, runtime, genres, version
 		FROM movies
 		WHERE id = $1`
 
@@ -115,8 +176,8 @@ func (m MovieModel) Get(id int64) (*Movie, error) {
 func (m MovieModel) Update(movie *Movie) error {
 	// Declare the SQL query for updating the record and returning the new version number.
 	// Add the 'AND version = $6' clause to the SQL query.
-	query := `
-		UPDATE movies
+	query :=
+		`UPDATE movies
 		SET title = $1, year = $2, runtime = $3, genres = $4, version = version + 1
 		WHERE id = $5 AND version = $6
 		RETURNING version`
@@ -160,8 +221,8 @@ func (m MovieModel) Delete(id int64) error {
 	}
 
 	// Construct the SQL query to delete the record.
-	query := `
-		DELETE FROM movies
+	query :=
+		`DELETE FROM movies
 		WHERE id = $1`
 
 	// Create a context with a 3-second timeout.
