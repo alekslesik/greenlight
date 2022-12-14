@@ -85,7 +85,7 @@ func main() {
 		logger: logger,
 		models: data.NewModels(db),
 	}
-	
+
 	// Call app.serve() to start the server.
 	err = app.serve()
 	if err != nil {
