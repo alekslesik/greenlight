@@ -10,5 +10,6 @@
             "username": "postgres",
             "password": "486464"
         }
-    ]
+    ],
+    "terminal.explorerKind": "external"
 }

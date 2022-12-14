@@ -3,14 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
-	"log"
-
-	// "encoding/json"
 	"flag"
-	"fmt"
-
-	// "log"
-	"net/http"
 	"os"
 	"time"
 
