@@ -1,6 +1,8 @@
 package data
 
 import (
+	"context"
+	"database/sql"
 	"errors"
 	"time"
 
@@ -21,6 +23,11 @@ type User struct {
 	Activated bool      `json:"activated"`
 	Version   int       `json:"version"`
 }
+
+// Define a custom ErrDuplicateEmail error.
+var (
+	ErrDuplicateEmail = errors.New("duplicate email")
+)
 
 // Create a custom password type which is a struct containing the plaintext and hashed
 // versions of the password for a user. The plaintext field is a *pointer* to a string,
@@ -94,4 +101,134 @@ func ValidateUser(v *validator.Validator, user *User) {
 	if user.Password.hash == nil {
 		panic("missing password hash for user")
 	}
+}
+
+// Create a UserModel struct which wraps the connection pool.
+type UserModel struct {
+	DB *sql.DB
+}
+
+// The Insert() method accepts a pointer to a user struct, which should contain the
+// data for the new record.
+func (m UserModel) Insert(user *User) error {
+	// Define the SQL query for inserting a new record in the users table and returning
+	// the system-generated data.
+	query :=
+		`INSERT INTO users (name, email, password_hash, activated)
+		VALUES ($1, $2, $3, $4)
+		RETURNING id, created_at, version`
+
+	// Create an args slice containing the values for the placeholder parameters from
+	// the user struct. Declaring this slice immediately next to our SQL query helps to
+	// make it nice and clear *what values are being used where* in the query.
+	args := []interface{}{
+		user.Name,
+		user.Email,
+		user.Password.hash,
+		user.Activated,
+	}
+
+	// Create a context with a 3-second timeout.
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	// Use the QueryRowContext() method to execute the SQL query on our connection pool,
+	// passing in the args slice as a variadic parameter and scanning the system-
+	// generated id, created_at and version values into the movie struct.
+	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&user.ID, &user.CreatedAt, &user.Version)
+	if err != nil {
+		switch {
+		case err.Error() == `pq: duplicate key value violates unique
+			constraint "users_email_key"`:
+			return ErrDuplicateEmail
+		default:
+			return err
+		}
+	}
+
+	return nil
+}
+
+// Retrieve the User details from the database based on the user's email address.
+// Because we have a UNIQUE constraint on the email column, this SQL query will only
+// return one record (or none at all, in which case we return a ErrRecordNotFound error).
+func (m UserModel) GetByEmail(email string) (*User, error) {
+	query := 
+		`SELECT id, created_at, name, email, password_hash, activated, version
+		FROM users
+		WHERE email = $1`
+
+	var user User
+
+	// Create a context with a 3-second timeout.
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+
+	err := m.DB.QueryRowContext(ctx, query, email).Scan(
+		&user.ID,
+		&user.CreatedAt,
+		&user.Name,
+		&user.Email,
+		&user.Password.hash,
+		&user.Activated,
+		&user.Version,
+	)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrRecordNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &user, nil
+}
+
+// Update the details for a specific user. Notice that we check against the version
+// field to help prevent any race conditions during the request cycle, just like we did
+// when updating a movie. And we also check for a violation of the "users_email_key"
+// constraint when performing the update, just like we did when inserting the user
+// record originally.
+func (m UserModel) Update(user *User) error {
+	// Declare the SQL query for updating the record and returning the new version number.
+	// Add the 'AND version = $6' clause to the SQL query.
+	query :=
+		`UPDATE users
+		SET name = $1, email = $2, password_hash = $3, activated = $4, version = version + 1
+		WHERE id = $5 AND version = $6
+		RETURNING version`
+
+	// Create an args slice containing the values for the placeholder parameters.
+	args := []interface{}{
+		user.Name,
+		user.Email,
+		user.Password.hash,
+		user.Activated,
+		user.ID,
+		user.Version,
+	}
+
+	// Create a context with a 3-second timeout.
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	// Use the QueryRowContext() method to execute the query, passing in the args slice as a
+	// variadic parameter and scanning the new version value into the user
+	// struct. If no matching row could be found, we know the user
+	// version has changed (or the record has been deleted) and we return our custom
+	// ErrEditConflict error.
+	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&user.Version)
+	if err != nil {
+		switch {
+		case err.Error() == `pq: duplicate key value violates unique
+		constraint "users_email_key"`:
+			return ErrDuplicateEmail
+		default:
+			return err
+		}
+	}
+	return nil
 }
