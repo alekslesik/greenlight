@@ -1,5 +1,7 @@
 package main
 
+// Graceful shutdown
+
 import (
 	"fmt"
 	"net/http"
