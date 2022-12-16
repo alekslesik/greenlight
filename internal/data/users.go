@@ -41,7 +41,7 @@ type password struct {
 // The Set() method calculates the bcrypt hash of a plaintext password, and stores both
 // the hash and the plaintext versions in the struct.
 func (p *password) Set(plaintextPassword string) error {
-	hash, err := bcrypt.GenerateFromPassword([]byte(*p.plaintext), 12)
+	hash, err := bcrypt.GenerateFromPassword([]byte(plaintextPassword), 12)
 	if err != nil {
 		return err
 	}
@@ -138,8 +138,7 @@ func (m UserModel) Insert(user *User) error {
 	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&user.ID, &user.CreatedAt, &user.Version)
 	if err != nil {
 		switch {
-		case err.Error() == `pq: duplicate key value violates unique
-			constraint "users_email_key"`:
+		case err.Error() == `pq: повторяющееся значение ключа нарушает ограничение уникальности "users_email_key"`:
 			return ErrDuplicateEmail
 		default:
 			return err
