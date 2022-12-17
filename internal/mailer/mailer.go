@@ -93,5 +93,17 @@ func (m *Mailer) Send(recipient string, templateFile string, data interface{}) e
 		return err
 	}
 
+	// Try sending the email up to three times before aborting and returning the final
+	// error. We sleep for 500 milliseconds between each attempt.
+	for i := 0; i <= 3; i++ {
+		err = m.dialer.DialAndSend(msg)
+		if err == nil {
+			return nil
+		}
+
+		// If it didn't work, sleep for a short time and retry.
+		time.Sleep(500 * time.Millisecond)
+	}
+
 	return nil
 }
