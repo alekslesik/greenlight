@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/alekslesik/greenlight/internal/data"
@@ -71,16 +70,8 @@ func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Reque
 
 	// Call the Send() method on our Mailer, passing in the user's email address,
 	// name of the template file, and the User struct containing the new user's data.
-	// Launch a goroutine which runs an anonymous function that sends thewelcome email.
-	go func() {
-		// Run a deferred function which uses recover() to catch any panic, and log an
-		// error message instead of terminating the application.
-		defer func() {
-			if err := recover(); err != nil {
-				app.logger.PrintError(fmt.Errorf("%s", err), nil)
-			}
-		}()
-
+	// Use the background helper to execute an anonymous function that sends the welcome email.
+	app.background(func() {
 		err = app.mailer.Send(user.Email, "user_welcome.html", user)
 		if err != nil {
 			// Importantly, if there is an error sending the email then we use the
@@ -88,7 +79,7 @@ func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Reque
 			// app.serverErrorResponse() helper like before.
 			app.logger.PrintError(err, nil)
 		}
-	}()
+	})
 
 	// Write a JSON response with a 201 Created status code, the user data in the
 	// response body, and the Location header.
