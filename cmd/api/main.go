@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"flag"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/alekslesik/greenlight/internal/data"
@@ -34,15 +35,15 @@ type config struct {
 	}
 	limiter struct {
 		enabled bool
-		rps float64
-		burst int
+		rps     float64
+		burst   int
 	}
 	smtp struct {
-		host string
-		port int
+		host     string
+		port     int
 		username string
 		password string
-		sender string
+		sender   string
 	}
 }
 
@@ -51,6 +52,7 @@ type application struct {
 	logger *jsonlog.Logger
 	models data.Models
 	mailer mailer.Mailer
+	wg     sync.WaitGroup
 }
 
 func main() {
