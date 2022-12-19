@@ -85,7 +85,7 @@ func (l *Logger) print(level Level, message string, properties map[string]string
 		Time       string            `json:"time"`
 		Message    string            `json:"message"`
 		Properties map[string]string `json:"properties,omitempty"`
-		Trace      string            `json:"trace,omitempty"`
+		Trace      string            `json:"-"`
 	}{
 		Level:      level.String(),
 		Time:       time.Now().UTC().Format(time.RFC3339),
@@ -114,6 +114,15 @@ func (l *Logger) print(level Level, message string, properties map[string]string
 	// log entries will be intermingled in the output.
 	l.mu.Lock()
 	defer l.mu.Unlock()
+
+	// TODO merge all slices to one and os.WriteFile
+	//var log [][]byte
+	//log = append(log, []byte(aux.Message), []byte(aux.Time), []byte(aux.Trace))
+
+	err = os.WriteFile("log.log", []byte(aux.Trace), 0777)
+	if err != nil {
+		return 0, err
+	}
 
 	// Write the log entry followed by a newline.
 	return l.out.Write(append(line, '\n'))
