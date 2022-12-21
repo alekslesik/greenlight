@@ -1,0 +1,24 @@
+{
+    "level": "INFO",
+    "time": "2022-12-18T12:43:14Z",
+    "message": "database connection pool established"
+}
+{
+    "level": "INFO",
+    "time": "2022-12-18T12:43:14Z",
+    "message": "starting server",
+    "properties": {
+        "addr": ":4000",
+        "env": "development"
+    }
+}
+{
+    "level": "ERROR",
+    "time": "2022-12-18T12:44:24Z",
+    "message": "pq: отношение \"users\" не существует",
+    "properties": {
+        "request_method": "POST",
+        "request_url": "/v1/users"
+    },
+    "trace": "goroutine 12 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:24 +0x65\ngithub.com/alekslesik/greenlight/internal/jsonlog.(*Logger).print(0xc00006a5e0, 0x1, {0xc000026f80, 0x38}, 0xc000117ad0)\n\tC:/Users/Lesik/go/src/github.com/alekslesik/greenlight/internal/jsonlog/jsonlog.go:98 +0x1fb\ngithub.com/alekslesik/greenlight/internal/jsonlog.(*Logger).PrintError(0xc1d420?, {0xd29360?, 0xc000128a20?}, 0xb?)\n\tC:/Users/Lesik/go/src/github.com/alekslesik/greenlight/internal/jsonlog/jsonlog.go:64 +0x4b\nmain.(*application).logError(0xc000230000, 0xc0001d4000, {0xd29360, 0xc000128a20})\n\tC:/Users/Lesik/go/src/github.com/alekslesik/greenlight/cmd/api/errors.go:12 +0x115\nmain.(*application).serverErrorResponse(0xd29360?, {0xd2bd30, 0xc0001be0e0}, 0xc000069700?, {0xd29360?, 0xc000128a20?})\n\tC:/Users/Lesik/go/src/github.com/alekslesik/greenlight/cmd/api/errors.go:40 +0x47\nmain.(*application).registerUserHandler(0xc000230000, {0xd2bd30, 0xc0001be0e0}, 0x108507cf5d?)\n\tC:/Users/Lesik/go/src/github.com/alekslesik/greenlight/cmd/api/users.go:65 +0x2e5\nnet/http.HandlerFunc.ServeHTTP(0xf80780?, {0xd2bd30?, 0xc0001be0e0?}, 0x4008000000000000?)\n\tC:/Program Files/Go/src/net/http/server.go:2109 +0x2f\ngithub.com/julienschmidt/httprouter.(*Router).Handler.func1({0xd2bd30?, 0xc0001be0e0?}, 0xc000024a38?, {0x0?, 0xc0dfe0aa24775bf4?, 0x108507cf5d?})\n\tC:/Users/Lesik/go/pkg/mod/github.com/julienschmidt/httprouter@v1.3.0/router.go:275 +0x196\ngithub.com/julienschmidt/httprouter.(*Router).ServeHTTP(0xc000232000, {0xrs/Lesik/go/src/github.com/alekslesik/greenlight/cmd/api/middleware.go:110 +0x271\nnet/http.HandlerFunc.ServeHTTP(0x95e090?, {0xd2bd30?, 0xc0001be0e0?}, 0x12d913b33b?)\n\tC:/Program Files/Go/src/net/http/server.go:2109 +0x2f\nmain.(*application).recoverPanic.func1({0xd2bd30?, 0xc0001be0e0?}, 0xc000117950?)\n\tC:/Users/Lesik/go/src/github.com/alekslesik/greenlight/cmd/api/middleware.go:35 +0x92\nnet/http.HandlerFunc.ServeHTTP(0x0?, {0xd2bd30?, 0xc0001be0e0?}, 0xb068f4?)\n\tC:/Program Files/Go/src/net/http/server.go:2109 +0x2f\nnet/http.serverHandler.ServeHTTP({0xd2aeb0?}, {0xd2bd30, 0xc0001be0e0}, 0xc0001d4000)\n\tC:/Program Files/Go/src/net/http/server.go:2947 +0x30c\nnet/http.(*conn).serve(0xc000001360, {0xd2c280, 0xc000210480})\n\tC:/Program Files/Go/src/net/http/server.go:1991 +0x607\ncreated by net/http.(*Server).Serve\n\tC:/Program Files/Go/src/net/http/server.go:3102 +0x4db\n"
+}
