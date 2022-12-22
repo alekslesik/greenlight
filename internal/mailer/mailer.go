@@ -83,7 +83,7 @@ func (m *Mailer) Send(recipient string, templateFile string, data interface{}) e
 	msg.SetHeader("From", m.sender)
 	msg.SetHeader("Subject", subject.String())
 	msg.SetBody("text/plain", plainBody.String())
-	msg.AddAlternative("text/html", plainBody.String())
+	msg.AddAlternative("text/html", htmlBody.String())
 
 	// Try sending the email up to three times before aborting and returning the final
 	// error. We sleep for 500 milliseconds between each attempt.
