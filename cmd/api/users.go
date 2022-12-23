@@ -9,7 +9,7 @@ import (
 	"github.com/alekslesik/greenlight/internal/validator"
 )
 
-// v1/u
+// POST /v1/users; Register a new user
 func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Request) {
 	// Create an anonymous struct to hold the expected data from the request body.
 	var input struct {
@@ -111,4 +111,33 @@ func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
+}
+
+//! PUT /v1/users/activated; Activate a specific user
+func (app *application) activateUserHandler(w http.ResponseWriter, r *http.Request) {
+	// Parse the plaintext activation token from the request body.
+	var input struct {
+		TokenPlaintext string `json:"token"`
+	}
+
+	err := app.readJSON(w, r, input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	// Validate the plaintext token provided by the client.
+	v := validator.New()
+
+	if data.ValidateTokenPlaintext(v, input.TokenPlaintext); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	// Retrieve the details of the user associated with the token using the
+	// GetForToken() method (which we will create in a minute). If no matching record
+	// is found, then we let the client know that the token they provided is not valid.
+	
+
+
 }
