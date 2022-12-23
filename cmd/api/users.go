@@ -120,7 +120,7 @@ func (app *application) activateUserHandler(w http.ResponseWriter, r *http.Reque
 		TokenPlaintext string `json:"token"`
 	}
 
-	err := app.readJSON(w, r, input)
+	err := app.readJSON(w, r, &input)
 	if err != nil {
 		app.badRequestResponse(w, r, err)
 		return
@@ -166,7 +166,11 @@ func (app *application) activateUserHandler(w http.ResponseWriter, r *http.Reque
 
 	// If everything went successfully, then we delete all activation tokens for the
 	// user.
-
+	err = app.models.Tokens.DeleteAllForUser(data.ScopeActivation, user.ID)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
 
 	// Send the updated user details to the client in a JSON response.
 	err = app.writeJSON(w, http.StatusOK, envelope{"user":user}, nil)

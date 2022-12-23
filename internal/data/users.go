@@ -247,7 +247,7 @@ func (m UserModel) GetForToken(tokenScope, tokenPlaintext string) (*User, error)
 		ON users.id = tokens.user_id
 		WHERE tokens.hash = $1
 		AND tokens.scope = $2
-		AND tokens.expiry = $3`
+		AND tokens.expiry > $3`
 
 	// Create a slice containing the query arguments. Notice how we use the [:] operator
 	// to get a slice containing the token hash, rather than passing in the array (which
@@ -272,7 +272,7 @@ func (m UserModel) GetForToken(tokenScope, tokenPlaintext string) (*User, error)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
-			return nil, sql.ErrNoRows
+			return nil, ErrRecordNotFound
 		default:
 			return nil, err
 		}
