@@ -9,7 +9,7 @@ import (
 	"github.com/alekslesik/greenlight/internal/validator"
 )
 
-// POST /v1/users; Register a new user
+//* POST /v1/users; Register a new user
 func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Request) {
 	// Create an anonymous struct to hold the expected data from the request body.
 	var input struct {
@@ -113,7 +113,7 @@ func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Reque
 	}
 }
 
-//! PUT /v1/users/activated; Activate a specific user
+//* PUT /v1/users/activated; Activate a specific user
 func (app *application) activateUserHandler(w http.ResponseWriter, r *http.Request) {
 	// Parse the plaintext activation token from the request body.
 	var input struct {

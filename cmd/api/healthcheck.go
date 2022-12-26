@@ -6,6 +6,7 @@ import (
 
 // Declare a handler which writes a plain-text response with information about the
 // application status, operating environment and version.
+//* GET /v1/healthcheck; show application information
 func (app *application) healthcheckHandler(w http.ResponseWriter, r *http.Request) {
 	// Create a fixed-format JSON response from a string. Notice how we're using a raw
 	// string literal (enclosed with backticks) so that we can include double-quote
