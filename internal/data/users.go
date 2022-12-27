@@ -11,20 +11,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Define a User struct to represent an individual user. Importantly, notice how we are
-// using the json:"-" struct tag to prevent the Password and Version fields appearing in
-// any output when we encode it to JSON. Also notice that the Password field uses the
-// custom password type defined below.
-type User struct {
-	ID        int64     `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	Name      string    `json:"name"`
-	Email     string    `json:"email"`
-	Password  password  `json:"-"`
-	Activated bool      `json:"activated"`
-	Version   int       `json:"version"`
-}
-
 // Define a custom ErrDuplicateEmail error.
 var (
 	ErrDuplicateEmail = errors.New("duplicate email")
@@ -107,6 +93,26 @@ func ValidateUser(v *validator.Validator, user *User) {
 // Create a UserModel struct which wraps the connection pool.
 type UserModel struct {
 	DB *sql.DB
+}
+
+var AnonymousUser = &User{}
+
+// Define a User struct to represent an individual user. Importantly, notice how we are
+// using the json:"-" struct tag to prevent the Password and Version fields appearing in
+// any output when we encode it to JSON. Also notice that the Password field uses the
+// custom password type defined below.
+type User struct {
+	ID        int64     `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	Password  password  `json:"-"`
+	Activated bool      `json:"activated"`
+	Version   int       `json:"version"`
+}
+
+func (u *User) IsAnonymous() bool {
+	return u == AnonymousUser
 }
 
 // The Insert() method accepts a pointer to a user struct, which should contain the
