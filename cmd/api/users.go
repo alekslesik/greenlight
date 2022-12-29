@@ -100,8 +100,6 @@ func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Reque
 		}
 	})
 
-
-
 	// Write a JSON response with a 201 Created status code, the user data in the
 	// response body, and the Location header.
 	// Note that we also change this to send the client a 202 Accepted status code.
