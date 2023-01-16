@@ -16,9 +16,9 @@ type Level int8
 // keyword as a shortcut to assign successive integer values to the constants.
 const (
 	LevelInfo  Level = iota // Has the value 0.
-	LevelError        // Has the value 1.
-	LevelFatal        // Has the value 2.
-	LevelOff          // Has the value 3.
+	LevelError        		// Has the value 1.
+	LevelFatal        		// Has the value 2.
+	LevelOff          		// Has the value 3.
 )
 
 // Return a human-friendly string for the severity level.
@@ -47,7 +47,7 @@ type Logger struct {
 // Return a new Logger instance which writes log entries at or above a minimum severity
 // level to a specific output destination.
 func New(out io.Writer, minLevel Level) *Logger {
-	return &Logger{
+	return &Logger {
 		out:      out,
 		minLevel: minLevel,
 	}
