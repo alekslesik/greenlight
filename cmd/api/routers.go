@@ -31,8 +31,8 @@ func (app *application) routes() http.Handler {
 	// curl -d "$BODY" localhost:4000/v1/tokens/authentication
 	router.HandlerFunc(http.MethodPost, "/v1/tokens/authentication", app.createAuthenticationTokenHandler)
 
-	// curl -H "Authorization: Bearer TOKEN"
-	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.requirePermission("movies:read", app.healthcheckHandler))
+	// curl -H "Authorization: Bearer TOKEN" localhost:4000
+	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHandler)
 	router.HandlerFunc(http.MethodGet, "/v1/movies",  app.requirePermission("movies:read", app.listMoviesHandler))
 	router.HandlerFunc(http.MethodPost, "/v1/movies", app.requirePermission("movies:write",app.createMovieHandler))
 	router.HandlerFunc(http.MethodGet, "/v1/movies/:id", app.requirePermission("movies:read",app.showMovieHandler))
@@ -44,8 +44,6 @@ func (app *application) routes() http.Handler {
 	// Activate a specific user; PUT {"token":""}
 	router.HandlerFunc(http.MethodPut, "/v1/users/activated", app.activateUserHandler)
 
-
-
 	// Wrap the router with the panic recovery middleware.
-	return app.recoverPanic(app.rateLimit(app.authenticate(router)))
+	return  app.recoverPanic(app.enableCORS(app.rateLimit(app.authenticate(router))))
 }

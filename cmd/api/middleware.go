@@ -262,3 +262,12 @@ func (app *application) requirePermission(code string, next http.HandlerFunc) ht
 		// Wrap this with the requireActivatedUser() middleware before returning it.
 		return app.requireActivatedUser(fn)
 }
+
+// Write "Access-Control-Allow-Origin:*" to response header
+func (app *application) enableCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+
+		next.ServeHTTP(w, r)
+	})
+}
