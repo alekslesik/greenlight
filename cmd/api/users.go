@@ -159,7 +159,7 @@ func (app *application) activateUserHandler(w http.ResponseWriter, r *http.Reque
 	// the same way that we did for our movie records.
 	err = app.models.Users.Update(user)
 	if err != nil {
-		switch  {
+		switch {
 		case errors.Is(err, data.ErrEditConflict):
 			app.editConflictResponse(w, r)
 		default:
@@ -177,7 +177,7 @@ func (app *application) activateUserHandler(w http.ResponseWriter, r *http.Reque
 	}
 
 	// Send the updated user details to the client in a JSON response.
-	err = app.writeJSON(w, http.StatusOK, envelope{"user":user}, nil)
+	err = app.writeJSON(w, http.StatusOK, envelope{"user": user}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return

@@ -9,7 +9,7 @@ import (
 	"github.com/alekslesik/greenlight/internal/validator"
 )
 
-//* GET /v1/movies; show the details of all movies.
+// * GET /v1/movies; show the details of all movies.
 func (app *application) listMoviesHandler(w http.ResponseWriter, r *http.Request) {
 	// To keep things consistent with our other handlers, we'll define an input struct // to hold the expected values from the request query string.
 	var input struct {
@@ -66,7 +66,7 @@ func (app *application) listMoviesHandler(w http.ResponseWriter, r *http.Request
 	}
 }
 
-//* POST /v1/movies; create a new movie.
+// * POST /v1/movies; create a new movie.
 func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Request) {
 	// Declare an anonymous struct to hold the information that we expect to be in the
 	// HTTP request body (note that the field names and types in the struct are a subset
@@ -130,7 +130,7 @@ func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Reques
 	}
 }
 
-//* GET /v1/movies/:id; show the details of a specific movie.
+// * GET /v1/movies/:id; show the details of a specific movie.
 func (app *application) showMovieHandler(w http.ResponseWriter, r *http.Request) {
 	// Extract the movie ID from the URL.
 	id, err := app.readIDParam(r)
@@ -160,7 +160,7 @@ func (app *application) showMovieHandler(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-//* PATCH /v1/movies/:id; update the details of a specific movie
+// * PATCH /v1/movies/:id; update the details of a specific movie
 func (app *application) updateMovieHandler(w http.ResponseWriter, r *http.Request) {
 	// Extract the movie ID from the URL.
 	id, err := app.readIDParam(r)
@@ -246,7 +246,7 @@ func (app *application) updateMovieHandler(w http.ResponseWriter, r *http.Reques
 	}
 }
 
-//* DELETE /v1/movies/:id; delete a specific movie
+// * DELETE /v1/movies/:id; delete a specific movie
 func (app *application) deleteMovieHandler(w http.ResponseWriter, r *http.Request) {
 	// Extract the movie ID from the URL.
 	id, err := app.readIDParam(r)

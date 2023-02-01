@@ -3,14 +3,14 @@ package main
 // Graceful shutdown
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"net/http"
-	"time"
 	"os"
 	"os/signal"
 	"syscall"
-	"errors"
-	"context"
+	"time"
 )
 
 func (app *application) serve() error {
@@ -52,11 +52,11 @@ func (app *application) serve() error {
 		// call the String() method on the signal to get the signal name and include it
 		// in the log entry properties.
 		app.logger.PrintInfo("shutting down server", map[string]string{
-			"signal" : s.String(),
+			"signal": s.String(),
 		})
 
 		// Create a context with a 5-second timeout.
-		ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 
 		// Call Shutdown() on our server, passing in the context we just made.
@@ -101,7 +101,7 @@ func (app *application) serve() error {
 	// Otherwise, we wait to receive the return value from Shutdown() on the
 	// shutdownError channel. If return value is an error, we know that there was a
 	// problem with the graceful shutdown and we return the error.
-	err = <- shutDownError
+	err = <-shutDownError
 	if err != nil {
 		return err
 	}
@@ -109,7 +109,7 @@ func (app *application) serve() error {
 	// At this point we know that the graceful shutdown completed successfully and we
 	// log a "stopped server" message.
 	app.logger.PrintInfo("stopped server", map[string]string{
-		"addr" : srv.Addr,
+		"addr": srv.Addr,
 	})
 
 	return nil

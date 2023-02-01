@@ -63,7 +63,7 @@ func (app *application) createAuthenticationTokenHandler(w http.ResponseWriter, 
 
 	// Otherwise, if the password is correct, we generate a new token with a 24-hour
 	// expiry time and the scope 'authentication'.
-	token, err := app.models.Tokens.New(user.ID, 24 * time.Hour, data.ScopeAuthentication)
+	token, err := app.models.Tokens.New(user.ID, 24*time.Hour, data.ScopeAuthentication)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return

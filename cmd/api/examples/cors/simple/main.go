@@ -9,8 +9,7 @@ import (
 // Define a string constant containing the HTML for the webpage. This consists of a <h1>
 // header tag, and some JavaScript which fetches the JSON from our GET /v1/healthcheck
 // endpoint and writes it to inside the <div id="output"></div> element.
-const html =
-`<!DOCTYPE html>
+const html = `<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -34,7 +33,7 @@ const html =
     </body>
 </html>`
 
-func main()  {
+func main() {
 	// Make the server address configurable at runtime via a command-line flag.
 	addr := flag.String("addr", ":9000", "Server address")
 	flag.Parse()

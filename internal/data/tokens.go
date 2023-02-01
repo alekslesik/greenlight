@@ -14,7 +14,7 @@ import (
 // Define constants for the token scope. For now we just define the scope "activation"
 // but we'll add additional scopes later in the book.
 const (
-	ScopeActivation = "activation"
+	ScopeActivation     = "activation"
 	ScopeAuthentication = "authentication"
 )
 
@@ -22,11 +22,11 @@ const (
 // plaintext and hashed versions of the token, associated user ID, expiry time and
 // scope.
 type Token struct {
-	Plaintext string	`json:"token"`
-	Hash      []byte	`json:"-"`
-	UserID    int64		`json:"-"`
-	Expiry    time.Time	`json:"expiry"`
-	Scope     string	`json:"-"`
+	Plaintext string    `json:"token"`
+	Hash      []byte    `json:"-"`
+	UserID    int64     `json:"-"`
+	Expiry    time.Time `json:"expiry"`
+	Scope     string    `json:"-"`
 }
 
 func generateToken(userID int64, ttl time.Duration, scope string) (*Token, error) {
@@ -72,7 +72,7 @@ func generateToken(userID int64, ttl time.Duration, scope string) (*Token, error
 }
 
 // Check that the plaintext token has been provided and is exactly 52 bytes long.
-func ValidateTokenPlaintext(v *validator.Validator, tokenPlaintex string)  {
+func ValidateTokenPlaintext(v *validator.Validator, tokenPlaintex string) {
 	v.Check(tokenPlaintex != "", "token", "must be provided")
 	v.Check(len(tokenPlaintex) == 26, "token", "must be 26 bytes long")
 }
@@ -97,12 +97,12 @@ func (m TokenModel) New(userID int64, ttl time.Duration, scope string) (*Token, 
 // Insert() adds the data for a specific token to the tokens table.
 func (m TokenModel) Insert(token *Token) error {
 	query :=
-	`INSERT INTO tokens (hash, user_id, expiry, scope)
+		`INSERT INTO tokens (hash, user_id, expiry, scope)
 		VALUES ($1, $2, $3, $4)`
 
 	args := []interface{}{token.Hash, token.UserID, token.Expiry, token.Scope}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3 * time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	_, err := m.DB.ExecContext(ctx, query, args...)
@@ -112,12 +112,12 @@ func (m TokenModel) Insert(token *Token) error {
 // DeleteAllForUser() deletes all tokens for a specific user and scope.
 func (m TokenModel) DeleteAllForUser(scope string, userID int64) error {
 	query :=
-	`DELETE FROM tokens
+		`DELETE FROM tokens
 	WHERE scope = $1 AND user_id = $2`
 
 	args := []interface{}{scope, userID}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3 * time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	_, err := m.DB.ExecContext(ctx, query, args...)

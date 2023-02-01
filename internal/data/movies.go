@@ -60,7 +60,7 @@ func (m *MovieModel) GetAll(title string, genres []string, filters Filters) ([]*
 	defer rows.Close()
 
 	// Declare a totalRecords variable.
-	totalRecords:= 0
+	totalRecords := 0
 
 	// Initialize an empty slice to hold the movie data.
 	movies := []*Movie{}

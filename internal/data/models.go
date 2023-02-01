@@ -9,14 +9,14 @@ import (
 // looking up a movie that doesn't exist in our database.
 var (
 	ErrRecordNotFound = errors.New("record not found")
-	ErrEditConflict = errors.New("edit conflict")
+	ErrEditConflict   = errors.New("edit conflict")
 )
 
 // Create a Models struct which wraps the MovieModel and UserModel
 type Models struct {
-	Movies MovieModel
-	Users UserModel
-	Tokens TokenModel
+	Movies      MovieModel
+	Users       UserModel
+	Tokens      TokenModel
 	Permissions PermissionModel
 }
 
@@ -24,9 +24,9 @@ type Models struct {
 // the initialized MovieModel and UserModel
 func NewModels(db *sql.DB) Models {
 	return Models{
-		Movies: MovieModel{DB: db},
-		Users: UserModel{DB: db},
-		Tokens: TokenModel{DB: db},
+		Movies:      MovieModel{DB: db},
+		Users:       UserModel{DB: db},
+		Tokens:      TokenModel{DB: db},
 		Permissions: PermissionModel{DB: db},
 	}
 }

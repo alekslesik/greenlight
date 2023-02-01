@@ -9,8 +9,7 @@ import (
 // Define a string constant containing the HTML for the webpage. This consists of a <h1>
 // header tag, and some JavaScript which calls our POST /v1/tokens/authentication
 // endpoint and writes the response body to inside the <div id="output"> </div> tag.
-const html =
-`<!DOCTYPE html>
+const html = `<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />

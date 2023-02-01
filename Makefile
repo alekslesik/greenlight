@@ -1,6 +1,10 @@
 # Include variables from the .envrc file
 include .envrc
 
+#=====================================#
+# HELPERS #
+#=====================================#
+
 ## help: print this help message
 .PHONY: help
 help:
@@ -10,6 +14,10 @@ help:
 .PHONY: confirm
 confirm:
 	@echo -n 'Are you sure? [y/N] ' && read ans && [ $${ans:-N} = y ]
+
+#=====================================#
+# DEVELOPMENT #
+#=====================================#
 
 ## run/api: run the cmd/api application
 .PHONY: run/api
@@ -32,3 +40,28 @@ db/migrations/new:
 db/migrations/up: confirm
 	@echo 'Running up migrations...'
 	migrate -path ./migrations -database ${GREENLIGHT_DB_DSN} up
+
+#=====================================#
+# QUALITY CONTROL #
+#=====================================#
+
+## audit: tidy dependencies and format, vet and test all code
+## go mod tidy : prune any unused dependencies from the go.mod and go.sum files, and add any missing dependencies
+## go mod verify : check that the dependencies on your computer (located in your module cache located at $GOPATH/pkg/mod)
+## haven’t been changed since they were downloaded and that they match the cryptographic hashes in your go.sum file
+## go fmt ./... : command to format all .go files in the project directory, according to the Go standard.
+## go vet ./... : runs a variety of analyzers which carry out static analysis of your code and warn you
+## go test -race -vet=off ./... : command to run all tests in the project directory
+## staticcheck tool : to carry out some additional static analysis checks.
+.PHONY: audit
+audit:
+	@echo 'Tidying and verifying module dependencies...'
+	go mod tidy
+	go mod verify
+	@echo 'Formatting code...'
+	go fmt ./...
+	@echo 'Vetting code...'
+	go vet ./...
+	staticcheck ./...
+	@echo 'Running tests...'
+	go test -race -vet=off ./...

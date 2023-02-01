@@ -11,7 +11,7 @@ func (app *application) logError(r *http.Request, err error) {
 	// request method and URL as properties in the log entry.
 	app.logger.PrintError(err, map[string]string{
 		"request_method": r.Method,
-		"request_url" : r.URL.String(),
+		"request_url":    r.URL.String(),
 	})
 }
 
@@ -75,7 +75,7 @@ func (app *application) editConflictResponse(w http.ResponseWriter, r *http.Requ
 }
 
 // Send a 429 Too Many Requests code from rate limiting middleware
-func (app *application) rateLimitExceededResponse(w http.ResponseWriter, r *http.Request)  {
+func (app *application) rateLimitExceededResponse(w http.ResponseWriter, r *http.Request) {
 	message := "rate limit exceeded"
 	app.errorResponse(w, r, http.StatusTooManyRequests, message)
 }
