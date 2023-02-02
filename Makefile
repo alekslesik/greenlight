@@ -20,9 +20,9 @@ confirm:
 #=====================================#
 
 ## run/api: run the cmd/api application
-.PHONY: run/api
-run/api:
-	@go run ./cmd/api -db-dsn=${GREENLIGHT_DB_DSN}
+.PHONY: run
+run:
+	go run ./cmd/api/
 
 ## db/psql: connect to the database using psql
 .PHONY: db/psql
@@ -46,18 +46,13 @@ db/migrations/up: confirm
 #=====================================#
 
 ## audit: tidy dependencies and format, vet and test all code
-## go mod tidy : prune any unused dependencies from the go.mod and go.sum files, and add any missing dependencies
-## go mod verify : check that the dependencies on your computer (located in your module cache located at $GOPATH/pkg/mod)
-## haven’t been changed since they were downloaded and that they match the cryptographic hashes in your go.sum file
+
 ## go fmt ./... : command to format all .go files in the project directory, according to the Go standard.
 ## go vet ./... : runs a variety of analyzers which carry out static analysis of your code and warn you
 ## go test -race -vet=off ./... : command to run all tests in the project directory
 ## staticcheck tool : to carry out some additional static analysis checks.
 .PHONY: audit
-audit:
-	@echo 'Tidying and verifying module dependencies...'
-	go mod tidy
-	go mod verify
+audit: vendor
 	@echo 'Formatting code...'
 	go fmt ./...
 	@echo 'Vetting code...'
@@ -65,3 +60,15 @@ audit:
 	staticcheck ./...
 	@echo 'Running tests...'
 	go test -race -vet=off ./...
+
+## go mod tidy : prune any unused dependencies from the go.mod and go.sum files, and add any missing dependencies
+## go mod verify : check that the dependencies on your computer (located in your module cache located at $GOPATH/pkg/mod)
+## haven’t been changed since they were downloaded and that they match the cryptographic hashes in your go.sum file
+## go mod vendor: copy the necessary source code from your module cache into a new vendor directory in your project root
+.PHONY: vendor
+vendor:
+	@echo 'Tidying and verifying module dependencies...'
+	go mod tidy
+	go mod verify
+	@echo 'Vendoring dependencies...'
+	go mod vendor
