@@ -1,9 +1,0 @@
-goroutine 1 [running]:
-runtime/debug.Stack()
-	C:/Program Files/Go/src/runtime/debug/stack.go:24 +0x65
-github.com/alekslesik/greenlight/internal/jsonlog.(*Logger).print(0xc000060600, 0x2, {0x112ba1b, 0x19}, 0x0)
-	C:/Users/Lesik/go/src/github.com/alekslesik/greenlight/internal/jsonlog/jsonlog.go:98 +0x1fb
-github.com/alekslesik/greenlight/internal/jsonlog.(*Logger).PrintFatal(0xc00011e7e0?, {0x11d02a0?, 0x149c780?}, 0x115c6e0?)
-	C:/Users/Lesik/go/src/github.com/alekslesik/greenlight/internal/jsonlog/jsonlog.go:68 +0x4b
-main.main()
-	C:/Users/Lesik/go/src/github.com/alekslesik/greenlight/cmd/api/main.go:162 +0xa6b
