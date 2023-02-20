@@ -87,3 +87,20 @@ build:
 	@echo 'Building cmd/api...'
 	go build -ldflags=${linker_flags} -o=./bin/api ./cmd/api
 	GOOS=linux GOARCH=amd64 go build -ldflags=${linker_flags} -o=./bin/linux_amd64/api ./cmd/api
+
+#=====================================#
+# PRODUCTION #
+#=====================================#
+
+production_host_ip = '82.146.47.139'
+## production/connect: connect to the production server
+.PHONY: connect 
+connect:
+	ssh greenlight@${production_host_ip}
+
+## production/deploy/api: deploy the api to production
+.PHONY: deploy
+deploy:
+	rsync -rP --delete ./bin/linux_amd64/api ./migrations greenlight@${production_host_ip}:~
+	ssh -t greenlight@${production_host_ip} 'migrate -path ~/migrations -database $$GREENLIGHT_DB_DSN up'
+	ssh -t greenlight@${production_host_ip} 'chmod 744 api'

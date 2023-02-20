@@ -11,5 +11,19 @@
             "password": "486464"
         }
     ],
-    "terminal.explorerKind": "external"
+    "terminal.explorerKind": "external",
+
+    "deploy": {
+        "targets": [
+            {
+                "type": "sftp",
+                "name": "greenlight",
+                "description": "greenlight",
+
+                "dir": "/var/www/greenlight",
+                "host": "82.146.47.139", "port": 22,
+                "user": "root", "password": "4864Kokos"
+            }
+        ]
+    }
 }
