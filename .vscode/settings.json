@@ -12,7 +12,7 @@
         }
     ],
     "terminal.explorerKind": "external",
-
+ 
     "deploy": {
         "targets": [
             {
