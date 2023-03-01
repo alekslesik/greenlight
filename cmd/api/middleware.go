@@ -346,6 +346,8 @@ func (app *application) metrics(next http.Handler) http.Handler {
 
 	// The following code will be run for every request...
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		
+
 		// Use the Add() method to increment the number of requests received by 1.
 		totalRequestsReceived.Add(1)
 
@@ -353,9 +355,6 @@ func (app *application) metrics(next http.Handler) http.Handler {
 		// the chain along with the existing http.ResponseWriter and http.Request. This
 		// returns the metrics struct that we saw above.
 		metrics := httpsnoop.CaptureMetrics(next, w, r)
-
-		// Call the next handler in the chain.
-		next.ServeHTTP(w, r)
 
 		// On the way back up the middleware chain, increment the number of responses sent by 1.
 		totalResponsesSent.Add(1)
