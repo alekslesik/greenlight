@@ -107,7 +107,6 @@ func (app *application) rateLimit(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 
-
 	// return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	// 	// Extract the client's IP address from the request.
 	// 	ip, _, err := net.SplitHostPort(r.RemoteAddr)
@@ -163,7 +162,7 @@ func (app *application) rateLimit(next http.Handler) http.Handler {
 	// 		return
 	// 	}
 	// 	next.ServeHTTP(w, r)
-// })
+	// })
 }
 
 func (app *application) authenticate(next http.Handler) http.Handler {
@@ -346,7 +345,6 @@ func (app *application) metrics(next http.Handler) http.Handler {
 
 	// The following code will be run for every request...
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		
 
 		// Use the Add() method to increment the number of requests received by 1.
 		totalRequestsReceived.Add(1)

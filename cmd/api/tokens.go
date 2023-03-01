@@ -9,7 +9,7 @@ import (
 	"github.com/alekslesik/greenlight/internal/validator"
 )
 
-//* POST /v1/tokens/authentication; generate a new authentication token
+// * POST /v1/tokens/authentication; generate a new authentication token
 func (app *application) createAuthenticationTokenHandler(w http.ResponseWriter, r *http.Request) {
 	// Parse the email and password from the request body.
 	var input struct {

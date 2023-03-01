@@ -26,8 +26,6 @@ func (app *application) routes() http.Handler {
 	// http.MethodPost are constants which equate to the strings "GET" and "POST" respectively
 	// router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHandler)
 
-
-
 	// curl -H "Authorization: Bearer TOKEN" localhost:4000
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHandler)
 	router.HandlerFunc(http.MethodGet, "/v1/movies", app.requirePermission("movies:read", app.listMoviesHandler))
@@ -43,7 +41,7 @@ func (app *application) routes() http.Handler {
 	// BODY='{"email": "alice@example.com", "password": "pa55word"}'
 	// curl -d "$BODY" localhost:4000/v1/tokens/authentication
 	router.HandlerFunc(http.MethodPost, "/v1/tokens/authentication", app.createAuthenticationTokenHandler)
-	
+
 	// 3.  Activate a specific user; PUT {"token":""}
 	router.HandlerFunc(http.MethodPut, "/v1/users/activated", app.activateUserHandler)
 
