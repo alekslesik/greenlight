@@ -1,0 +1,3 @@
+http://82.146.47.139 {
+    reverse_proxy localhost:4000
+}
