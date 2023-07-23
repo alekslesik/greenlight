@@ -1,13 +1,13 @@
-{
-    email alekslesik@gmail.com
-}
+# {
+#     email alekslesik@gmail.com
+# }
 
-82.146.47.139 {
-    respond /debug/* "Not Permitted" 403
-    reverse_proxy localhost:4000
-}
+# 82.146.47.139 {
+#     respond /debug/* "Not Permitted" 403
+#     reverse_proxy localhost:4000
+# }
 
-alekslesik.fvds.ru {
-    respond /debug/* "Not Permitted" 403
-    reverse_proxy localhost:4000
-}
+# alekslesik.fvds.ru {
+#     respond /debug/* "Not Permitted" 403
+#     reverse_proxy localhost:4000
+# }
